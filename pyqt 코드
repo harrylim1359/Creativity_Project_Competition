@@ -1,0 +1,301 @@
+import sys
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit
+from PyQt6.QtCore import QEventLoop, Qt
+
+app = QApplication(sys.argv)
+
+schedules = {}
+widgets = []
+
+def closeEvent(self, event):
+    event.ignore()
+
+class Time:
+    def __init__(self, time):
+        time = str(time)
+        self.time = time
+        year,month,day,hour = time.split("/")
+        year = int(year)
+        month = int(month)
+        day = int(day)
+        hour, minute = map(int,hour.split(":"))
+        
+        self.year = year
+        self.month = month
+        self.day = day
+        self.hour = hour
+        self.minute = minute
+
+    def _key(self):
+        return (
+            self.year,
+            self.month,
+            self.day,
+            self.hour,
+            self.minute
+        )
+
+    def __lt__(self, other):
+        return self._key() < other._key()
+
+    def __le__(self, other):
+        return self._key() <= other._key()
+
+    def __eq__(self, other):
+        return self._key() == other._key()
+
+    def __ne__(self, other):
+        return self._key() != other._key()
+
+    def __gt__(self, other):
+        return self._key() > other._key()
+
+    def __ge__(self, other):
+        return self._key() >= other._key()
+    
+    def __str__(self):
+        return str(self.time)
+    
+
+class Schedule:
+    def __init__(self, time_1, time_2):
+        time_1 = Time(time_1)
+        time_2 = Time(time_2)
+        self.start_time = time_1
+        self.end_time = time_2
+    
+    def is_schedule_right(self):
+        return self.start_time < self.end_time
+    
+    def __str__(self):
+        return str(self.start_time)+"~"+str(self.end_time)
+
+def centerX(x=0):
+    return (1000-x)//2
+
+
+def centerY(y=0):
+    return (600-y)//2
+
+
+def delete_widgets():
+    global widgets
+
+    for widget in widgets:
+        widget.deleteLater()
+
+    widgets.clear()
+
+def add_schedule_page(window):
+    global widgets
+
+    delete_widgets()
+
+    loop = QEventLoop()
+    result = None
+
+    add_plan_button = QPushButton("일정 추가하기", window)
+    widgets.append(add_plan_button)
+    add_plan_button.setFixedSize(175,63)
+    add_plan_button.move(centerX(175),400)
+    add_plan_button.show()
+
+    schedule_name_input_box = QLineEdit("",window)
+    schedule_name_input_box.setPlaceholderText("일정의 이름을 입력하세요.")
+    widgets.append(schedule_name_input_box)
+    schedule_name_input_box.setFixedSize(500,63)
+    schedule_name_input_box.move(centerX(500),centerY(63)-70)
+    schedule_name_input_box.show()
+
+    schedule_start_time_input_box = QLineEdit("", window)
+    schedule_start_time_input_box.setPlaceholderText("일정 시작 시간 입력 예)2026/12/30/12:00")
+    widgets.append(schedule_start_time_input_box)
+    schedule_start_time_input_box.setFixedSize(500,63)
+    schedule_start_time_input_box.move(centerX(500),centerY(63))
+    schedule_start_time_input_box.show()
+
+    
+    schedule_end_time_input_box = QLineEdit("", window)
+    schedule_end_time_input_box.setPlaceholderText("일정 종료 시간 입력 예)2026/12/30/12:00")
+    widgets.append(schedule_end_time_input_box)
+    schedule_end_time_input_box.setFixedSize(500,63)
+    schedule_end_time_input_box.move(centerX(500),centerY(63)+70)
+    schedule_end_time_input_box.show()
+    
+    return_button = QPushButton("돌아가기", window)
+    widgets.append(return_button)
+    return_button.setFixedSize(150,75)
+    return_button.move(850,0)
+    return_button.show()
+
+    def go_started():
+        nonlocal result
+        result = "started"
+        loop.quit()
+
+    def add_schedule():
+        global schedules
+        try:
+            schedule = Schedule(schedule_start_time_input_box.text(),
+                                schedule_end_time_input_box.text())
+            schedule_name = schedule_name_input_box.text()
+            
+            if(schedule_name.strip() == ""):
+                return
+            
+            if(not schedule.is_schedule_right()):
+                return
+            
+            if schedule_name in schedules:
+                return
+            
+            schedules[schedule_name] = schedule
+            
+            for key, value in schedules.items():
+                print(f"{key} : {value}")
+            
+        except Exception as e:
+            print(e)
+            return
+        
+    return_button.clicked.connect(go_started)
+    add_plan_button.clicked.connect(add_schedule)
+
+    loop.exec()
+    return result
+    
+
+def see_schedule_page(window):
+    global widgets
+    
+    delete_widgets()
+    
+    loop = QEventLoop()
+    result = None
+    
+    return_button = QPushButton("돌아가기", window)
+    widgets.append(return_button)
+    return_button.setFixedSize(150,75)
+    return_button.move(850, 0)
+    return_button.show()
+    
+    def go_started():
+        nonlocal result
+        result = "started"
+        loop.quit()
+    
+    return_button.clicked.connect(go_started)
+    
+    loop.exec()
+    return result
+
+def started_page(window):
+    global widgets
+
+    delete_widgets()
+
+    loop = QEventLoop()
+    result = None
+
+    add_plan_button = QPushButton("일정 추가하기", window)
+    widgets.append(add_plan_button)
+    add_plan_button.setFixedSize(250,125)
+    add_plan_button.move(centerX(250),centerY(125)-70)
+    add_plan_button.show()
+    
+    see_plan_button = QPushButton("일정 확인하기", window)
+    widgets.append(see_plan_button)
+    see_plan_button.setFixedSize(250,125)
+    see_plan_button.move(centerX(250),centerY(125)+70)
+    see_plan_button.show()
+
+    return_button = QPushButton("돌아가기", window)
+    widgets.append(return_button)
+    return_button.setFixedSize(150,75)
+    return_button.move(850,0)
+    return_button.show()
+
+    def go_main():
+        nonlocal result
+        result = "main"
+        loop.quit()
+    
+    def go_see_schedule():
+        nonlocal result
+        result  = "see_schedule"
+        loop.quit()
+    
+    def go_add_schedule():
+        nonlocal result
+        result = "add_schedule"
+        loop.quit()
+
+    return_button.clicked.connect(go_main)
+    add_plan_button.clicked.connect(go_add_schedule)
+    see_plan_button.clicked.connect(go_see_schedule)
+
+    loop.exec()
+    return result
+
+
+def main_page(window=None):
+    global widgets
+
+    if window is None:
+        window = QWidget()
+        window.setFixedSize(1000,600)
+
+    delete_widgets()
+
+    loop = QEventLoop()
+    result = None
+
+    getstarted_button = QPushButton("시작하기", window)
+    widgets.append(getstarted_button)
+
+    getstarted_button.setFixedSize(250,125)
+    getstarted_button.move(centerX(250),centerY(125))
+    getstarted_button.show()
+
+    quit_button = QPushButton("끄기", window)
+    widgets.append(quit_button)
+
+    quit_button.setFixedSize(150,75)
+    quit_button.move(850,0)
+    quit_button.show()
+
+    def go_started():
+        nonlocal result
+        result = "started"
+        loop.quit()
+
+    getstarted_button.clicked.connect(go_started)
+    quit_button.clicked.connect(sys.exit)
+
+    window.show()
+
+    loop.exec()
+    return window, result
+
+
+if __name__ == "__main__":
+    window = None
+    page = "main"
+
+    while True:
+        if page == "main":
+            window, page = main_page(window)
+
+        elif page == "started":
+            page = started_page(window)
+        
+        elif page == "add_schedule":
+            page = add_schedule_page(window)
+
+        elif page == "see_schedule":
+            page = see_schedule_page(window)
+        
+        elif page == "quit":
+            break
+
+    sys.exit()
