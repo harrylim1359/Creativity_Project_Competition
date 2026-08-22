@@ -1,0 +1,378 @@
+function radioNum보여주기 () {
+    _10자리 = Math.idiv(radioGroup, 10)
+    _1자리 = radioGroup % 10
+    if (radioGroup <= 9) {
+        basic.showNumber(radioGroup,10)
+    } else if (radioGroup == 10) {
+        basic.showLeds(`
+            # . # # #
+            # . # . #
+            # . # . #
+            # . # . #
+            # . # # #
+            `)
+    } else {
+        basic.clearScreen()
+        for (let index = 0; index <= _10자리 - 1; index++) {
+            led.plot(0, index)
+        }
+        for (let index2 = 0; index2 <= _1자리 - 1; index2++) {
+            led.plot(Math.idiv(index2, 5) + 3, index2 % 5)
+        }
+        if (sw2) {
+            // (0,4) 불이 들어와 있으면 A버튼 누를 때 공연 준비 코드가 작동
+            led.unplot(0, 4)
+        } else {
+            led.plot(0, 4)
+        }
+    }
+    basic.pause(40)
+}
+function 각도제한 (angle: number) {
+    if (angle > 180) {
+        return 180
+    } else if (angle < 0) {
+        return 0
+    } else {
+        return angle
+    }
+}
+radio.onReceivedNumber(function (receivedNumber) {
+    radioNum = receivedNumber
+    basic.pause(2)
+})
+function 오른쪽_깨금발 () {
+    Work(0, 0, 25, 0, 0, 20, 0, 0, -25, 0, 0, -20, 18)
+    Work(-70, -70, 0, 15, -10, 0, 70, 70, 0, -15, 10, 0, 10)
+    for (let index = 0; index < 3; index++) {
+        Work(-25, 0, 0, -25, 0, 0, 25, 0, 0, 25, 0, 0, 10)
+        Work(25, 0, 0, 25, 0, 0, -25, 0, 0, -25, 0, 0, 10)
+    }
+    for (let index = 0; index < 8; index++) {
+        Work(-25, -20, 0, -25, -20, 0, 25, 20, 0, 25, 20, 0, 3)
+        Work(25, 20, 0, 25, 20, 0, -25, -20, 0, -25, -20, 0, 3)
+    }
+    Work(70, 70, 0, -15, 10, 0, -70, -70, 0, 15, -10, 0, 10)
+    Work(0, 0, -25, 0, 0, -20, 0, 0, 25, 0, 0, 20, 10)
+}
+function 서서_쫙_펼치기 () {
+    Work(0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, -45, 9)
+    Work(-108, -72, 0, 108, 72, 0, 108, 72, 0, -108, -72, 0, 12)
+    basic.pause(3000)
+    Work(108, 72, 0, -108, -72, 0, -108, -72, 0, 108, 72, 0, 12)
+    Work(0, 0, 0, 0, 0, -45, 0, 0, 0, 0, 0, 45, 9)
+}
+function 왼쪽으로 () {
+    Work(0, 0, 0, -20, -80, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 0, 0, 0, 90, 0, 0, 0, 0, 0, 0, 9)
+    Work(0, 0, 0, 20, 80, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(20, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 0, 0, 0, -45, 0, 0, -45, 0, 0, -45, 9)
+    Work(-20, -80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 0, 0, 0, -45, 0, 0, 45, 0, 0, 0, 9)
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 80, 0, 4)
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 9)
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 0, -20, -80, 0, 4)
+}
+function Work (s1: number, s2: number, s3: number, s4: number, s5: number, s6: number, s7: number, s8: number, s9: number, s10: number, s11: number, s12: number, speed: number) {
+    for (let index9 = 0; index9 <= speed; index9++) {
+        if (s1 != 0) {
+            kitronik_i2c_16_servo.servoWrite(kitronik_i2c_16_servo.Servos.Servo1, 각도제한(WorkLst[0] + s1 * index9 / speed))
+        }
+        if (s2 != 0) {
+            kitronik_i2c_16_servo.servoWrite(kitronik_i2c_16_servo.Servos.Servo2, 각도제한(WorkLst[1] + s2 * index9 / speed))
+        }
+        if (s3 != 0) {
+            kitronik_i2c_16_servo.servoWrite(kitronik_i2c_16_servo.Servos.Servo3, 각도제한(WorkLst[2] + s3 * index9 / speed))
+        }
+        if (s4 != 0) {
+            kitronik_i2c_16_servo.servoWrite(kitronik_i2c_16_servo.Servos.Servo4, 각도제한(WorkLst[3] + s4 * index9 / speed))
+        }
+        if (s5 != 0) {
+            kitronik_i2c_16_servo.servoWrite(kitronik_i2c_16_servo.Servos.Servo5, 각도제한(WorkLst[4] + s5 * index9 / speed))
+        }
+        if (s6 != 0) {
+            kitronik_i2c_16_servo.servoWrite(kitronik_i2c_16_servo.Servos.Servo6, 각도제한(WorkLst[5] + s6 * index9 / speed))
+        }
+        if (s7 != 0) {
+            kitronik_i2c_16_servo.servoWrite(kitronik_i2c_16_servo.Servos.Servo7, 각도제한(WorkLst[6] + s7 * index9 / speed))
+        }
+        if (s8 != 0) {
+            kitronik_i2c_16_servo.servoWrite(kitronik_i2c_16_servo.Servos.Servo8, 각도제한(WorkLst[7] + s8 * index9 / speed))
+        }
+        if (s9 != 0) {
+            kitronik_i2c_16_servo.servoWrite(kitronik_i2c_16_servo.Servos.Servo9, 각도제한(WorkLst[8] + s9 * index9 / speed))
+        }
+        if (s10 != 0) {
+            kitronik_i2c_16_servo.servoWrite(kitronik_i2c_16_servo.Servos.Servo10, 각도제한(WorkLst[9] + s10 * index9 / speed))
+        }
+        if (s11 != 0) {
+            kitronik_i2c_16_servo.servoWrite(kitronik_i2c_16_servo.Servos.Servo11, 각도제한(WorkLst[10] + s11 * index9 / speed))
+        }
+        if (s12 != 0) {
+            kitronik_i2c_16_servo.servoWrite(kitronik_i2c_16_servo.Servos.Servo12, 각도제한(WorkLst[11] + s12 * index9 / speed))
+        }
+        basic.pause(delay)
+    }
+    WorkLst[0] = WorkLst[0] + s1
+    WorkLst[1] = WorkLst[1] + s2
+    WorkLst[2] = WorkLst[2] + s3
+    WorkLst[3] = WorkLst[3] + s4
+    WorkLst[4] = WorkLst[4] + s5
+    WorkLst[5] = WorkLst[5] + s6
+    WorkLst[6] = WorkLst[6] + s7
+    WorkLst[7] = WorkLst[7] + s8
+    WorkLst[8] = WorkLst[8] + s9
+    WorkLst[9] = WorkLst[9] + s10
+    WorkLst[10] = WorkLst[10] + s11
+    WorkLst[11] = WorkLst[11] + s12
+}
+input.onButtonPressed(Button.A, function () {
+    // 139번 줄에 공연 준비 코드를 넣어주세요. A버튼을 누르면 이 아래에 있는 코드가 작동합니다.
+    // A+B버튼을 홀수번 누르면 A버튼은 체널을 증가 감소시키는 데 활용됩니다.
+    if (sw2) {
+        radioGroup += -1
+        if (radioGroup < 0) {
+            radioGroup = 27
+        }
+    } else {
+        //마지막 부분
+        let n = 712 / 2;
+        let a = 50;
+        //Work(-108,-36,0,108,36,45,108,36,0,-108,-36,-45,1);
+        //Work(108, 36, 0, -108, -36, -45, -108, -36, 0, 108, 36, 45, 1);
+        basic.pause(500);
+        Work(-a, 45, 0, 108, 36, 45, 108, 36, 0, -108, -36, -45, 1);
+        basic.pause(n);
+        Work(a, -45, 0, -108, -36, -45, -108, -36, 0, 108, 36, 45, 1);
+        basic.pause(n);
+        Work(-108, -36, 0, a, -45, 45, 108, 36, 0, -108, -36, -45, 1);
+        basic.pause(n);
+        Work(108, 36, 0, -a, 45, -45, -108, -36, 0, 108, 36, 45, 1);
+        basic.pause(n);
+        Work(-108, -36, 0, 108, 36, 45, 108, 36, 0, -a, 45, -45, 1);
+        basic.pause(n);
+        Work(108, 36, 0, -108, -36, -45, -108, -36, 0, a, -45, 45, 1);
+        basic.pause(n);
+        Work(-108, -36, 0, 108, 36, 45, a, -45, 0, -108, -36, -45, 1);
+        basic.pause(n);
+        Work(108, 36, 0, -108, -36, -45, -a, 45, 0, 108, 36, 45, 1);
+        basic.pause(n);
+        //asdf
+        Work(-108, -36, 0, 108, 36, 45, a, -45, 0, -108, -36, -45, 1);
+        basic.pause(n);
+        Work(108, 36, 0, -108, -36, -45, -a, 45, 0, 108, 36, 45, 1);
+        basic.pause(n);
+        Work(-a, 45, 0, 108, 36, 45, 108, 36, 0, -108, -36, -45, 1);
+        basic.pause(n);
+        Work(a, -45, 0, -108, -36, -45, -108, -36, 0, 108, 36, 45, 1);
+        basic.pause(n);
+        Work(-108, -36, 0, 108, 36, 45, 108, 36, 0, -a, 45, -45, 1);
+        basic.pause(n);
+        Work(108, 36, 0, -108, -36, -45, -108, -36, 0, a, -45, 45, 1);
+        basic.pause(n);
+        Work(-108, -36, 0, a, -45, 45, 108, 36, 0, -108, -36, -45, 1);
+        basic.pause(n);
+        Work(108, 36, 0, -a, 45, -45, -108, -36, 0, 108, 36, 45, 1);
+    }
+})
+function 앉아서_쫙_펼치기 () {
+    Work(0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, -45, 9)
+    Work(-108, -36, 0, 108, 36, 0, 108, 36, 0, -108, -36, 0, 12)
+    basic.pause(3000)
+    Work(108, 36, 0, -108, -36, 0, -108, -36, 0, 108, 36, 0, 12)
+    Work(0, 0, 0, 0, 0, -45, 0, 0, 0, 0, 0, 45, 9)
+}
+function 오른쪽으로 () {
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 80, 0, 4)
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -45, 9)
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 0, -20, -80, 0, 4)
+    Work(0, 0, 0, 0, 0, 45, 0, 0, -45, 0, 0, 0, 9)
+    Work(20, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, -45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9)
+    Work(-20, -80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 0, -20, -80, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 45, 0, 0, -45, 0, 0, 45, 0, 0, 45, 4)
+    Work(0, 0, 0, 20, 80, 0, 0, 0, 0, 0, 0, 0, 4)
+}
+function 손인사2 () {
+    Work(20, 20, 0, 0, 0, 0, -20, -20, 0, -20, 0, 0, 10)
+    Work(0, 0, 0, 0, -80, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 9)
+    for (let index = 0; index < 3; index++) {
+        Work(0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 5)
+        Work(0, 0, 0, -20, 0, 0, 0, 0, 0, 0, 0, 0, 5)
+    }
+    Work(0, 0, 0, 0, 0, -45, 0, 0, 0, 0, 0, 0, 9)
+    Work(0, 0, 0, 0, 80, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(-20, -20, 0, 0, 0, 0, 20, 20, 0, 20, 0, 0, 10)
+}
+function 손인사1 () {
+    Work(20, 20, 0, 0, 0, 0, -20, -20, 0, -20, 0, 0, 10)
+    Work(0, 0, 0, 0, -80, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 9)
+    for (let index = 0; index < 3; index++) {
+        Work(0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 5)
+        Work(0, 0, 0, 0, 0, -20, 0, 0, 0, 0, 0, 0, 5)
+    }
+    Work(0, 0, 0, 0, 0, -45, 0, 0, 0, 0, 0, 0, 9)
+    Work(0, 0, 0, 0, 80, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(-20, -20, 0, 0, 0, 0, 20, 20, 0, 20, 0, 0, 10)
+}
+function 뒤로 () {
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 80, 0, 4)
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -45, 9)
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 0, -20, -80, 0, 4)
+    Work(0, 0, 0, 0, 0, 45, 0, 0, -45, 0, 0, 0, 9)
+    Work(20, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9)
+    Work(-20, -80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 0, 0, 0, 0, -20, -80, 0, 0, 0, 0, 4)
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 9)
+    Work(0, 0, 0, 0, 0, 0, 20, 80, 0, 0, 0, 0, 4)
+    Work(0, 0, -45, 0, 0, 0, 0, 0, 0, 0, 0, 45, 9)
+    Work(0, 0, 0, -20, -80, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 0, 0, 0, -45, 0, 0, 0, 0, 0, 0, 9)
+    Work(0, 0, 0, 20, 80, 0, 0, 0, 0, 0, 0, 0, 4)
+}
+input.onButtonPressed(Button.AB, function () {
+    radio.setGroup(5 * radioGroup)
+    sw2 = 1 - sw2
+    basic.showIcon(IconNames.Yes)
+})
+input.onButtonPressed(Button.B, function () {
+    radioGroup += 1
+    if (radioGroup > 27) {
+        radioGroup = 0
+    }
+})
+function 앉았다_일어나기 () {
+    Work(20, 40, 0, -20, -40, 0, -20, -40, 0, 20, 40, 0, 10)
+    Work(-20, -40, 0, 20, 40, 0, 20, 40, 0, -20, -40, 0, 10)
+}
+function 앞으로 () {
+    Work(0, 0, 0, -20, -80, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 9)
+    Work(0, 0, 0, 20, 80, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, -45, 9)
+    Work(0, 0, 0, 0, 0, 0, -20, -80, 0, 0, 0, 0, 4)
+    Work(0, 0, 0, 0, 0, 0, 0, 0, -45, 0, 0, 0, 9)
+    Work(0, 0, 0, 0, 0, 0, 20, 80, 0, 0, 0, 0, 4)
+    Work(20, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, -45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9)
+    Work(-20, -80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4)
+    Work(0, 0, 0, 0, 0, -45, 0, 0, 45, 0, 0, 0, 9)
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 80, 0, 4)
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 9)
+    Work(0, 0, 0, 0, 0, 0, 0, 0, 0, -20, -80, 0, 4)
+}
+function 복귀 () {
+    WorkLst = [
+    149,
+    70,
+    60,
+    40,
+    95,
+    58,
+    33,
+    90,
+    85,
+    141,
+    69,
+    83
+    ]
+    // 기본자세 오차 보정값
+    // 학생마다 이 숫자만 자기 로봇에 맞게 수정
+    Work(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4)
+}
+function 왼쪽_깨금발 () {
+    Work(0, 0, 25, 0, 0, 20, 0, 0, -25, 0, 0, -20, 18)
+    Work(-15, 10, 0, 70, 70, 0, 15, -10, 0, -70, -70, 0, 10)
+    for (let index = 0; index < 3; index++) {
+        Work(25, 0, 0, 25, 0, 0, -25, 0, 0, -25, 0, 0, 10)
+        Work(-25, 0, 0, -25, 0, 0, 25, 0, 0, 25, 0, 0, 10)
+    }
+    for (let index = 0; index < 8; index++) {
+        Work(25, 20, 0, 25, 20, 0, -25, -20, 0, -25, -20, 0, 3)
+        Work(-25, -20, 0, -25, -20, 0, 25, 20, 0, 25, 20, 0, 3)
+    }
+    Work(15, -10, 0, -70, -70, 0, -15, 10, 0, 70, 70, 0, 5)
+    Work(0, 0, -25, 0, 0, -20, 0, 0, 25, 0, 0, 20, 10)
+}
+let sw = 0
+let radioNum = 0
+let sw2 = 0
+let _1자리 = 0
+let _10자리 = 0
+let WorkLst: number[] = []
+let delay = 0
+let ModyLst: number[] = []
+let radioGroup = 0
+basic.showLeds(`
+    # . . . #
+    . # # # .
+    # # # # #
+    . # . # .
+    # . . . #
+    `)
+radioGroup = 0
+radio.setGroup(150 + randint(0, 26))
+delay = 20
+WorkLst = [
+149,
+70,
+60,
+40,
+95,
+58,
+33,
+90,
+85,
+141,
+69,
+83
+]
+// 기본자세 오차 보정값
+// 학생마다 이 숫자만 자기 로봇에 맞게 수정
+Work(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10)
+앉았다_일어나기()
+basic.forever(function () {
+    // 305번 줄에 공연용 전체 코드를 넣어주세요. 조종기의 A+B버튼을 누르고 체널 설정 후 A+B를 한번 더 누르면 실행됩니다.
+    if (radioNum == 13) {
+    	
+    } else if (radioNum == 1) {
+        앞으로()
+    } else if (radioNum == 2) {
+        뒤로()
+    } else if (radioNum == 3) {
+        왼쪽으로()
+    } else if (radioNum == 4) {
+        오른쪽으로()
+    } else if (radioNum == 12) {
+        if (sw) {
+            서서_쫙_펼치기()
+        } else {
+            앉아서_쫙_펼치기()
+        }
+        sw = 1 - sw
+    } else if (radioNum == 10) {
+        if (sw) {
+            손인사1()
+        } else {
+            손인사2()
+        }
+        sw = 1 - sw
+    } else if (radioNum == 9) {
+        if (sw) {
+            왼쪽_깨금발()
+        } else {
+            오른쪽_깨금발()
+        }
+        sw = 1 - sw
+    } else if (radioNum == 11) {
+        앉았다_일어나기()
+    } else {
+        radioNum = 0
+        radioNum보여주기()
+    }
+})
