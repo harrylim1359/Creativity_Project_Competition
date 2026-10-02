@@ -1,0 +1,27 @@
+package com.example.practice;
+
+import com.google.genai.Client;
+import com.google.genai.types.GenerateContentResponse;
+
+public class GeminiManager {
+
+    private final Client client;
+
+    public GeminiManager(String apiKey) {
+        client = Client.builder()
+                .apiKey(apiKey)
+                .build();
+    }
+
+    public String sendMessage(String message) {
+
+        GenerateContentResponse response =
+                client.models.generateContent(
+                        "gemini-3.6-flash",
+                        message,
+                        null
+                );
+
+        return response.text();
+    }
+}
